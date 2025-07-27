@@ -1,0 +1,34 @@
+{
+  "name": "AI_MATERIAL_MANAGEMENT",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^8.7.1",
+    "express": "^4",
+    "@sap/xssec": "^4",
+    "@cap-js/hana": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^1",
+    "@sap/cds-dk": "^8.7.1"
+  },
+  "overrides": {
+    "@sap/hdi-deploy": "5.4.2"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "cds": {
+    "requires": {
+      "[production]": {
+        "auth": "xsuaa"
+      }
+    }
+  }
+}
