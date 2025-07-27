@@ -1,0 +1,58 @@
+<mvc:View
+    controllerName="ai.mm.materialdashboard.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m">
+
+    <Page id="page" title="{i18n>title}" showNavButton="false">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <Title text="{i18n>title}" level="H1" class="sapUiMediumMarginBottom" />
+                <Text text="{i18n>dashboardSubtitle}" class="sapUiMediumMarginBottom" />
+                <Text text="{i18n>welcomeText}" class="sapUiLargeMarginBottom" />
+
+                <!-- Navigation buttons -->
+                <HBox class="sapUiMediumMarginBottom">
+                    <Button
+                        text="{i18n>navToMaterials}"
+                        type="Emphasized"
+                        press="onNavigateToMaterials"
+                        class="sapUiMediumMarginEnd" />
+                    <Button
+                        text="{i18n>navToPOList}"
+                        type="Default"
+                        press="onNavigateToPOList" />
+                </HBox>
+
+                <!-- Dashboard tiles -->
+                <HBox class="sapUiLargeMarginTop">
+                    <Panel class="sapUiMediumMarginEnd" width="300px" headerText="{i18n>materialsTitle}">
+                        <content>
+                            <VBox class="sapUiMediumMargin">
+                                <Text text="Manage your materials inventory" />
+                                <Button
+                                    text="{i18n>navToMaterials}"
+                                    type="Transparent"
+                                    press="onNavigateToMaterials"
+                                    class="sapUiMediumMarginTop" />
+                            </VBox>
+                        </content>
+                    </Panel>
+
+                    <Panel width="300px" headerText="{i18n>poListTitle}">
+                        <content>
+                            <VBox class="sapUiMediumMargin">
+                                <Text text="View and manage purchase orders" />
+                                <Button
+                                    text="{i18n>navToPOList}"
+                                    type="Transparent"
+                                    press="onNavigateToPOList"
+                                    class="sapUiMediumMarginTop" />
+                            </VBox>
+                        </content>
+                    </Panel>
+                </HBox>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

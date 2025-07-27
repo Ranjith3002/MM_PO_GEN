@@ -1,5 +1,13 @@
 {
+  "welcomeFile": "/app/material-dashboard/index.html",
+  "authenticationMethod": "route",
   "routes": [
+    {
+      "source": "^/app/(.*)$",
+      "target": "$1",
+      "localDir": "../material-dashboard/dist",
+      "cacheControl": "no-cache, no-store, must-revalidate"
+    },
     {
       "source": "^/(.*)$",
       "target": "$1",

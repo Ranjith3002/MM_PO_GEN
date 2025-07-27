@@ -35,6 +35,17 @@ modules:
     requires:
       - name: AI_MATERIAL_MANAGEMENT-db
 
+  - name: AI_MATERIAL_MANAGEMENT-ui
+    type: html5
+    path: app/material-dashboard
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms: []
+
   - name: AI_MATERIAL_MANAGEMENT
     type: approuter.nodejs
     path: app/router
@@ -50,6 +61,7 @@ modules:
           url: ~{srv-url}
           forwardAuthToken: true
       - name: AI_MATERIAL_MANAGEMENT-auth
+      - name: AI_MATERIAL_MANAGEMENT-destination-service
     provides:
       - name: app-api
         properties:
@@ -76,3 +88,8 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+  - name: AI_MATERIAL_MANAGEMENT-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite

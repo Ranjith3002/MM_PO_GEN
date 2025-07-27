@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+    <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+    <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="POService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityContainer Name="EntityContainer">
+        <EntitySet Name="Materials" EntityType="POService.Materials"/>
+        <EntitySet Name="PurchaseOrders" EntityType="POService.PurchaseOrders"/>
+        <ActionImport Name="generatePO" Action="POService.generatePO"/>
+        <ActionImport Name="predictDepletion" Action="POService.predictDepletion"/>
+      </EntityContainer>
+      <EntityType Name="Materials">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="currentStock" Type="Edm.Int32"/>
+        <Property Name="reorderLevel" Type="Edm.Int32"/>
+        <Property Name="supplier" Type="Edm.String"/>
+        <Property Name="leadTime" Type="Edm.Int32"/>
+        <NavigationProperty Name="purchaseOrders" Type="Collection(POService.PurchaseOrders)" Partner="material"/>
+      </EntityType>
+      <EntityType Name="PurchaseOrders">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="material_ID" Type="Edm.Guid"/>
+        <Property Name="quantity" Type="Edm.Int32"/>
+        <Property Name="suggestedByAI" Type="Edm.Boolean"/>
+        <Property Name="orderDate" Type="Edm.Date"/>
+        <Property Name="deliveryDate" Type="Edm.Date"/>
+        <NavigationProperty Name="material" Type="POService.Materials" Partner="purchaseOrders">
+          <ReferentialConstraint Property="material_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+      </EntityType>
+      <Action Name="generatePO" IsBound="false">
+        <Parameter Name="materialID" Type="Edm.Guid" Nullable="false"/>
+        <ReturnType Type="POService.PurchaseOrders"/>
+      </Action>
+      <Action Name="predictDepletion" IsBound="false">
+        <Parameter Name="materialID" Type="Edm.Guid" Nullable="false"/>
+        <ReturnType Type="Edm.String"/>
+      </Action>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

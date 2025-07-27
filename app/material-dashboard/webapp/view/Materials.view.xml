@@ -1,0 +1,100 @@
+<mvc:View
+    controllerName="ai.mm.materialdashboard.controller.Materials"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    
+    <Page id="materialsPage" title="{i18n>materialsViewTitle}" showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <!-- Header with search and refresh -->
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+                    <Title text="{i18n>materialsViewTitle}" level="H2" />
+                    <HBox>
+                        <SearchField 
+                            id="searchField"
+                            placeholder="{i18n>searchPlaceholder}" 
+                            search="onSearch"
+                            width="300px"
+                            class="sapUiMediumMarginEnd" />
+                        <Button 
+                            text="{i18n>refreshBtn}" 
+                            icon="sap-icon://refresh" 
+                            press="onRefresh" />
+                    </HBox>
+                </HBox>
+
+                <!-- Materials Table -->
+                <Table 
+                    id="materialsTable"
+                    items="{/Materials}"
+                    growing="true"
+                    growingThreshold="20"
+                    mode="None"
+                    class="sapUiResponsiveMargin">
+                    
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="{i18n>materialsTitle}" />
+                            <ToolbarSpacer />
+                            <Text text="{
+                                parts: ['/Materials'],
+                                formatter: '.formatItemsCount'
+                            }" />
+                        </Toolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column>
+                            <Text text="{i18n>materialName}" />
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>currentStock}" />
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>reorderLevel}" />
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>leadTime}" />
+                        </Column>
+                        <Column>
+                            <Text text="{i18n>supplier}" />
+                        </Column>
+                        <Column width="200px">
+                            <Text text="Actions" />
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{name}" />
+                                <ObjectNumber 
+                                    number="{currentStock}" 
+                                    state="{
+                                        parts: ['currentStock', 'reorderLevel'],
+                                        formatter: '.formatStockState'
+                                    }" />
+                                <Text text="{reorderLevel}" />
+                                <Text text="{leadTime}" />
+                                <Text text="{supplier}" />
+                                <HBox>
+                                    <Button 
+                                        text="{i18n>predictDepletionBtn}" 
+                                        type="Transparent" 
+                                        press="onPredictDepletion"
+                                        class="sapUiTinyMarginEnd" />
+                                    <Button 
+                                        text="{i18n>generatePOBtn}" 
+                                        type="Emphasized" 
+                                        press="onGeneratePO" />
+                                </HBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

@@ -1,0 +1,56 @@
+/* Custom styles for AI Material Management Dashboard */
+
+.sapUiResponsiveMargin {
+    margin: 1rem;
+}
+
+.sapUiMediumMargin {
+    margin: 0.5rem;
+}
+
+.sapUiLargeMarginTop {
+    margin-top: 1rem;
+}
+
+.sapUiMediumMarginTop {
+    margin-top: 0.5rem;
+}
+
+.sapUiMediumMarginBottom {
+    margin-bottom: 0.5rem;
+}
+
+.sapUiLargeMarginBottom {
+    margin-bottom: 1rem;
+}
+
+.sapUiMediumMarginEnd {
+    margin-right: 0.5rem;
+}
+
+.sapUiTinyMarginEnd {
+    margin-right: 0.25rem;
+}
+
+/* Dashboard specific styles */
+.dashboardCard {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.aiIndicator {
+    color: #0070f2;
+    font-weight: bold;
+}
+
+.stockCritical {
+    color: #bb0000;
+}
+
+.stockWarning {
+    color: #e78c07;
+}
+
+.stockGood {
+    color: #107e3e;
+}
