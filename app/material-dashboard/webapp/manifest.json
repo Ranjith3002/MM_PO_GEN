@@ -17,7 +17,7 @@
     },
     "dataSources": {
       "mainService": {
-        "uri": "/POService/",
+        "uri": "/odata/v4/po/",
         "type": "OData",
         "settings": {
           "annotations": [],
@@ -107,6 +107,20 @@
           "target": [
             "TargetPOList"
           ]
+        },
+        {
+          "name": "RouteAnalytics",
+          "pattern": "analytics",
+          "target": [
+            "TargetAnalytics"
+          ]
+        },
+        {
+          "name": "RouteAIMaterials",
+          "pattern": "ai-materials",
+          "target": [
+            "TargetAIMaterials"
+          ]
         }
       ],
       "targets": {
@@ -130,6 +144,20 @@
           "clearControlAggregation": false,
           "viewId": "POList",
           "viewName": "POList"
+        },
+        "TargetAnalytics": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "Analytics",
+          "viewName": "Analytics"
+        },
+        "TargetAIMaterials": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "AIEnhancedMaterials",
+          "viewName": "AIEnhancedMaterials"
         }
       }
     },

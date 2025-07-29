@@ -16,6 +16,14 @@ sap.ui.define([
             this.getRouter().navTo("RoutePOList");
         },
 
+        onNavigateToAnalytics: function () {
+            this.getRouter().navTo("RouteAnalytics");
+        },
+
+        onNavigateToAIMaterials: function () {
+            this.getRouter().navTo("RouteAIMaterials");
+        },
+
         getRouter: function () {
             return this.getOwnerComponent().getRouter();
         }

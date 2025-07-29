@@ -1,0 +1,6 @@
+ID;configKey;configValue;description;isActive;lastUpdated
+1;AI_SERVICE_URL;http://localhost:5000;URL for AI prediction service;true;2025-01-20T10:00:00Z
+2;DEFAULT_CONSUMPTION_RATE;5;Default daily consumption rate;true;2025-01-20T10:00:00Z
+3;STOCK_ALERT_THRESHOLD;0.8;Threshold for stock alerts (as ratio of reorder level);true;2025-01-20T10:00:00Z
+4;AUTO_PO_GENERATION;true;Enable automatic PO generation;true;2025-01-20T10:00:00Z
+5;EMAIL_NOTIFICATIONS;true;Enable email notifications;true;2025-01-20T10:00:00Z

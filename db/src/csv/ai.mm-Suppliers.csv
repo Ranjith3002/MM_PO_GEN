@@ -1,0 +1,6 @@
+ID;name;contactPerson;email;phone;address;city;country;rating;isActive;paymentTerms;deliveryTerms
+1;MetalCorp Inc.;John Smith;john.smith@metalcorp.com;+1-555-0101;123 Industrial Ave;Detroit;USA;4.5;true;NET30;FOB
+2;AlumTech Ltd.;Sarah Johnson;sarah.j@alumtech.com;+1-555-0102;456 Tech Blvd;Toronto;Canada;4.2;true;NET45;CIF
+3;WireTech Solutions;Mike Chen;mike.chen@wiretech.com;+1-555-0103;789 Wire St;San Jose;USA;4.8;true;NET15;DDP
+4;PlastiCorp;Anna Mueller;anna.m@plasticorp.de;+49-30-12345;Plastic Str. 10;Berlin;Germany;4.0;true;NET60;EXW
+5;RubberWorks;David Brown;d.brown@rubberworks.co.uk;+44-20-7890;Rubber Lane 5;London;UK;3.8;true;NET30;FOB

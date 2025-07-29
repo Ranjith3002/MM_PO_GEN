@@ -1,0 +1,199 @@
+<mvc:View
+    controllerName="ai.mm.materialdashboard.controller.Analytics"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:viz="sap.viz">
+    
+    <Page id="analyticsPage" title="{i18n>analyticsViewTitle}" showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                <!-- Header with refresh -->
+                <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiMediumMarginBottom">
+                    <Title text="{i18n>analyticsViewTitle}" level="H2" />
+                    <Button 
+                        text="{i18n>refreshBtn}" 
+                        icon="sap-icon://refresh" 
+                        press="onRefresh" />
+                </HBox>
+
+                <!-- KPI Cards -->
+                <HBox class="sapUiMediumMarginBottom">
+                    <Panel class="sapUiMediumMarginEnd dashboardCard" width="250px" headerText="Total Materials">
+                        <content>
+                            <VBox class="sapUiMediumMargin" alignItems="Center">
+                                <ObjectNumber 
+                                    id="totalMaterialsKPI"
+                                    number="0" 
+                                    emphasized="true" 
+                                    class="sapUiLargeMarginBottom" />
+                                <Text text="Active Materials" class="sapUiTinyText" />
+                            </VBox>
+                        </content>
+                    </Panel>
+
+                    <Panel class="sapUiMediumMarginEnd dashboardCard" width="250px" headerText="Low Stock Items">
+                        <content>
+                            <VBox class="sapUiMediumMargin" alignItems="Center">
+                                <ObjectNumber 
+                                    id="lowStockKPI"
+                                    number="0" 
+                                    state="Error"
+                                    emphasized="true" 
+                                    class="sapUiLargeMarginBottom" />
+                                <Text text="Below Reorder Level" class="sapUiTinyText" />
+                            </VBox>
+                        </content>
+                    </Panel>
+
+                    <Panel class="sapUiMediumMarginEnd dashboardCard" width="250px" headerText="Pending POs">
+                        <content>
+                            <VBox class="sapUiMediumMargin" alignItems="Center">
+                                <ObjectNumber 
+                                    id="pendingPOsKPI"
+                                    number="0" 
+                                    state="Warning"
+                                    emphasized="true" 
+                                    class="sapUiLargeMarginBottom" />
+                                <Text text="Awaiting Delivery" class="sapUiTinyText" />
+                            </VBox>
+                        </content>
+                    </Panel>
+
+                    <Panel class="dashboardCard" width="250px" headerText="AI Predictions">
+                        <content>
+                            <VBox class="sapUiMediumMargin" alignItems="Center">
+                                <ObjectNumber 
+                                    id="aiPredictionsKPI"
+                                    number="0" 
+                                    state="Success"
+                                    emphasized="true" 
+                                    class="sapUiLargeMarginBottom" />
+                                <Text text="Active Predictions" class="sapUiTinyText" />
+                            </VBox>
+                        </content>
+                    </Panel>
+                </HBox>
+
+                <!-- Charts Section -->
+                <HBox class="sapUiMediumMarginBottom">
+                    <!-- Stock Status Chart -->
+                    <Panel class="sapUiMediumMarginEnd" width="50%" headerText="Stock Status Distribution">
+                        <content>
+                            <VBox class="sapUiMediumMargin" height="300px">
+                                <viz:Popover id="stockStatusPopover"></viz:Popover>
+                                <viz:VizFrame 
+                                    id="stockStatusChart"
+                                    vizType="donut"
+                                    width="100%"
+                                    height="250px">
+                                    <viz:dataset>
+                                        <viz:FlattenedDataset data="{/StockStatusData}">
+                                            <viz:dimensions>
+                                                <viz:DimensionDefinition name="Status" value="{status}" />
+                                            </viz:dimensions>
+                                            <viz:measures>
+                                                <viz:MeasureDefinition name="Count" value="{count}" />
+                                            </viz:measures>
+                                        </viz:FlattenedDataset>
+                                    </viz:dataset>
+                                </viz:VizFrame>
+                            </VBox>
+                        </content>
+                    </Panel>
+
+                    <!-- Category Distribution Chart -->
+                    <Panel width="50%" headerText="Materials by Category">
+                        <content>
+                            <VBox class="sapUiMediumMargin" height="300px">
+                                <viz:Popover id="categoryPopover"></viz:Popover>
+                                <viz:VizFrame 
+                                    id="categoryChart"
+                                    vizType="column"
+                                    width="100%"
+                                    height="250px">
+                                    <viz:dataset>
+                                        <viz:FlattenedDataset data="{/CategoryData}">
+                                            <viz:dimensions>
+                                                <viz:DimensionDefinition name="Category" value="{category}" />
+                                            </viz:dimensions>
+                                            <viz:measures>
+                                                <viz:MeasureDefinition name="Count" value="{count}" />
+                                            </viz:measures>
+                                        </viz:FlattenedDataset>
+                                    </viz:dataset>
+                                </viz:VizFrame>
+                            </VBox>
+                        </content>
+                    </Panel>
+                </HBox>
+
+                <!-- Low Stock Materials Table -->
+                <Panel headerText="Materials Requiring Attention" class="sapUiMediumMarginTop">
+                    <content>
+                        <Table 
+                            id="lowStockTable"
+                            items="{/MaterialsWithLowStock}"
+                            growing="true"
+                            growingThreshold="10"
+                            mode="None"
+                            class="sapUiResponsiveMargin">
+                            
+                            <columns>
+                                <Column>
+                                    <Text text="Material" />
+                                </Column>
+                                <Column>
+                                    <Text text="Current Stock" />
+                                </Column>
+                                <Column>
+                                    <Text text="Reorder Level" />
+                                </Column>
+                                <Column>
+                                    <Text text="Status" />
+                                </Column>
+                                <Column>
+                                    <Text text="Supplier" />
+                                </Column>
+                                <Column>
+                                    <Text text="Actions" />
+                                </Column>
+                            </columns>
+
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{name}" />
+                                        <ObjectNumber 
+                                            number="{currentStock}" 
+                                            unit="{unitOfMeasure}"
+                                            state="{
+                                                path: 'stockStatus',
+                                                formatter: '.formatStockStatusState'
+                                            }" />
+                                        <Text text="{reorderLevel}" />
+                                        <ObjectStatus 
+                                            text="{stockStatus}"
+                                            state="{
+                                                path: 'stockStatus',
+                                                formatter: '.formatStockStatusState'
+                                            }" />
+                                        <Text text="{supplierName}" />
+                                        <HBox>
+                                            <Button 
+                                                text="Generate PO" 
+                                                type="Emphasized" 
+                                                icon="sap-icon://add-document"
+                                                press="onGeneratePOFromAnalytics" />
+                                        </HBox>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </content>
+                </Panel>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

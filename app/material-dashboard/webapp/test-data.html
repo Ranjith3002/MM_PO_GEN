@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Data - Material Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .low-stock { background-color: #ffebee; }
+        .normal-stock { background-color: #e8f5e8; }
+        .loading { text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Material Management - Data Test Page</h1>
+    <p>This page directly fetches data from the OData service to verify data availability.</p>
+    
+    <div id="loading" class="loading">Loading materials...</div>
+    <div id="error" style="display: none; color: red;"></div>
+    
+    <div id="summary" style="display: none;">
+        <h3>📊 Summary</h3>
+        <p>Total Materials: <span id="totalCount">0</span></p>
+        <p>Low Stock Items: <span id="lowStockCount">0</span></p>
+    </div>
+    
+    <table id="materialsTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Current Stock</th>
+                <th>Reorder Level</th>
+                <th>Unit Price</th>
+                <th>Supplier</th>
+                <th>Location</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="materialsBody">
+        </tbody>
+    </table>
+
+    <script>
+        async function loadMaterials() {
+            try {
+                console.log('Fetching materials from OData service...');
+                const response = await fetch('/odata/v4/po/Materials');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Received data:', data);
+                
+                if (!data.value || !Array.isArray(data.value)) {
+                    throw new Error('Invalid data format received');
+                }
+                
+                const materials = data.value;
+                displayMaterials(materials);
+                
+            } catch (error) {
+                console.error('Error loading materials:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = `Error: ${error.message}`;
+            }
+        }
+        
+        function displayMaterials(materials) {
+            console.log(`Displaying ${materials.length} materials`);
+            
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+            
+            // Show summary
+            const totalCount = materials.length;
+            const lowStockCount = materials.filter(m => m.currentStock <= m.reorderLevel).length;
+            
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('lowStockCount').textContent = lowStockCount;
+            document.getElementById('summary').style.display = 'block';
+            
+            // Show table
+            document.getElementById('materialsTable').style.display = 'table';
+            
+            // Populate table
+            const tbody = document.getElementById('materialsBody');
+            tbody.innerHTML = '';
+            
+            materials.forEach(material => {
+                const row = document.createElement('tr');
+                const isLowStock = material.currentStock <= material.reorderLevel;
+                row.className = isLowStock ? 'low-stock' : 'normal-stock';
+                
+                row.innerHTML = `
+                    <td><strong>${material.name}</strong><br><small>${material.description}</small></td>
+                    <td>${material.categoryName || 'N/A'}</td>
+                    <td>${material.currentStock} ${material.unitOfMeasure}</td>
+                    <td>${material.reorderLevel} ${material.unitOfMeasure}</td>
+                    <td>${material.unitPrice} ${material.currency_code}</td>
+                    <td>${material.supplierName || 'N/A'}</td>
+                    <td>${material.location}</td>
+                    <td>${isLowStock ? '🔴 Low Stock' : '🟢 Normal'}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Load materials when page loads
+        document.addEventListener('DOMContentLoaded', loadMaterials);
+    </script>
+</body>
+</html>

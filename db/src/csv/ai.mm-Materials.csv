@@ -1,0 +1,21 @@
+ID;name;description;category_ID;currentStock;reorderLevel;maxStock;minStock;unitOfMeasure;unitPrice;currency_code;supplier_ID;leadTime;safetyStock;location;barcode;isActive;lastStockUpdate
+11111111-1111-1111-1111-111111111111;Steel Rods;High-grade steel rods for construction;1;50;100;500;20;PCS;25.50;USD;1;7;30;Warehouse A;SR001;true;2025-01-20T10:00:00Z
+22222222-2222-2222-2222-222222222222;Aluminum Sheets;Lightweight aluminum sheets;1;200;150;800;50;SHT;15.75;USD;2;5;40;Warehouse B;AS002;true;2025-01-20T10:00:00Z
+33333333-3333-3333-3333-333333333333;Copper Wire;Electrical copper wire 12AWG;2;75;80;300;25;MTR;2.25;USD;3;3;20;Warehouse C;CW003;true;2025-01-20T10:00:00Z
+44444444-4444-4444-4444-444444444444;Plastic Pellets;High-density polyethylene pellets;1;300;250;1000;100;KG;1.85;USD;4;10;75;Warehouse D;PP004;true;2025-01-20T10:00:00Z
+55555555-5555-5555-5555-555555555555;Rubber Gaskets;Industrial rubber gaskets;2;25;50;200;15;PCS;8.90;USD;5;14;25;Warehouse E;RG005;true;2025-01-20T10:00:00Z
+66666666-6666-6666-6666-666666666666;Titanium Bolts;High-strength titanium bolts M12;2;15;40;150;10;PCS;45.00;USD;1;12;20;Warehouse A;TB006;true;2025-01-20T10:00:00Z
+77777777-7777-7777-7777-777777777777;Carbon Fiber Sheets;Lightweight carbon fiber composite;1;80;120;400;30;SHT;125.00;USD;2;8;35;Warehouse B;CF007;true;2025-01-20T10:00:00Z
+88888888-8888-8888-8888-888888888888;Hydraulic Fluid;Industrial hydraulic fluid ISO 32;3;45;60;200;20;LTR;12.50;USD;3;5;25;Warehouse C;HF008;true;2025-01-20T10:00:00Z
+99999999-9999-9999-9999-999999999999;Ball Bearings;Precision ball bearings 6205;2;120;100;500;40;PCS;18.75;USD;4;6;30;Warehouse D;BB009;true;2025-01-20T10:00:00Z
+aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa;Welding Electrodes;E7018 welding electrodes 3.2mm;4;35;80;300;25;KG;22.00;USD;5;10;40;Warehouse E;WE010;true;2025-01-20T10:00:00Z
+bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb;Stainless Steel Pipes;304 stainless steel pipes 2 inch;1;25;50;200;15;MTR;85.00;USD;1;14;20;Warehouse A;SP011;true;2025-01-20T10:00:00Z
+cccccccc-cccc-cccc-cccc-cccccccccccc;Electronic Sensors;Temperature sensors PT100;2;60;75;250;30;PCS;35.50;USD;2;7;25;Warehouse B;ES012;true;2025-01-20T10:00:00Z
+dddddddd-dddd-dddd-dddd-dddddddddddd;Safety Gloves;Cut-resistant safety gloves size L;3;180;200;800;50;PAIR;8.25;USD;3;3;60;Warehouse C;SG013;true;2025-01-20T10:00:00Z
+eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee;Industrial Lubricant;Multi-purpose industrial lubricant;3;90;120;400;40;LTR;15.75;USD;4;8;35;Warehouse D;IL014;true;2025-01-20T10:00:00Z
+ffffffff-ffff-ffff-ffff-ffffffffffff;Pneumatic Valves;3-way pneumatic control valves;2;40;65;200;20;PCS;95.00;USD;5;11;25;Warehouse E;PV015;true;2025-01-20T10:00:00Z
+10101010-1010-1010-1010-101010101010;Ceramic Insulators;High-voltage ceramic insulators;2;30;45;150;15;PCS;28.50;USD;1;9;18;Warehouse A;CI016;true;2025-01-20T10:00:00Z
+20202020-2020-2020-2020-202020202020;Conveyor Belts;Heavy-duty conveyor belt 1200mm;4;8;15;50;5;MTR;180.00;USD;2;21;8;Warehouse B;CB017;true;2025-01-20T10:00:00Z
+30303030-3030-3030-3030-303030303030;Filter Cartridges;HEPA filter cartridges 24x24x12;3;55;70;250;25;PCS;42.00;USD;3;6;30;Warehouse C;FC018;true;2025-01-20T10:00:00Z
+40404040-4040-4040-4040-404040404040;Motor Oil;Synthetic motor oil 5W-30;3;110;140;500;50;LTR;9.95;USD;4;4;45;Warehouse D;MO019;true;2025-01-20T10:00:00Z
+50505050-5050-5050-5050-505050505050;Packaging Tape;Heavy-duty packaging tape 48mm;5;220;180;800;80;ROLL;3.25;USD;5;2;70;Warehouse E;PT020;true;2025-01-20T10:00:00Z

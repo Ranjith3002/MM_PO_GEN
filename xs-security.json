@@ -1,6 +1,118 @@
 {
-  "scopes": [],
-  "attributes": [],
-  "role-templates": [],
-  "authorities-inheritance": false
+  "xsappname": "AI_MATERIAL_MANAGEMENT",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.MaterialsRead",
+      "description": "Read access to materials"
+    },
+    {
+      "name": "$XSAPPNAME.MaterialsWrite",
+      "description": "Write access to materials"
+    },
+    {
+      "name": "$XSAPPNAME.PurchaseOrdersRead",
+      "description": "Read access to purchase orders"
+    },
+    {
+      "name": "$XSAPPNAME.PurchaseOrdersWrite",
+      "description": "Write access to purchase orders"
+    },
+    {
+      "name": "$XSAPPNAME.PurchaseOrdersApprove",
+      "description": "Approve purchase orders"
+    },
+    {
+      "name": "$XSAPPNAME.AnalyticsRead",
+      "description": "Read access to analytics and reports"
+    },
+    {
+      "name": "$XSAPPNAME.SystemConfig",
+      "description": "Access to system configuration"
+    },
+    {
+      "name": "$XSAPPNAME.AIActions",
+      "description": "Execute AI-powered actions"
+    }
+  ],
+  "attributes": [
+    {
+      "name": "Department",
+      "description": "User department",
+      "valueType": "string"
+    },
+    {
+      "name": "Location",
+      "description": "User location/warehouse",
+      "valueType": "string"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "MaterialManager",
+      "description": "Material Manager with full access to materials",
+      "scope-references": [
+        "$XSAPPNAME.MaterialsRead",
+        "$XSAPPNAME.MaterialsWrite",
+        "$XSAPPNAME.PurchaseOrdersRead",
+        "$XSAPPNAME.PurchaseOrdersWrite",
+        "$XSAPPNAME.AnalyticsRead",
+        "$XSAPPNAME.AIActions"
+      ],
+      "attribute-references": ["Department", "Location"]
+    },
+    {
+      "name": "PurchaseManager",
+      "description": "Purchase Manager with PO approval rights",
+      "scope-references": [
+        "$XSAPPNAME.MaterialsRead",
+        "$XSAPPNAME.PurchaseOrdersRead",
+        "$XSAPPNAME.PurchaseOrdersWrite",
+        "$XSAPPNAME.PurchaseOrdersApprove",
+        "$XSAPPNAME.AnalyticsRead",
+        "$XSAPPNAME.AIActions"
+      ],
+      "attribute-references": ["Department", "Location"]
+    },
+    {
+      "name": "WarehouseOperator",
+      "description": "Warehouse Operator with limited access",
+      "scope-references": [
+        "$XSAPPNAME.MaterialsRead",
+        "$XSAPPNAME.MaterialsWrite",
+        "$XSAPPNAME.PurchaseOrdersRead"
+      ],
+      "attribute-references": ["Location"]
+    },
+    {
+      "name": "Analyst",
+      "description": "Business Analyst with read-only access",
+      "scope-references": [
+        "$XSAPPNAME.MaterialsRead",
+        "$XSAPPNAME.PurchaseOrdersRead",
+        "$XSAPPNAME.AnalyticsRead"
+      ]
+    },
+    {
+      "name": "SystemAdmin",
+      "description": "System Administrator with full access",
+      "scope-references": [
+        "$XSAPPNAME.MaterialsRead",
+        "$XSAPPNAME.MaterialsWrite",
+        "$XSAPPNAME.PurchaseOrdersRead",
+        "$XSAPPNAME.PurchaseOrdersWrite",
+        "$XSAPPNAME.PurchaseOrdersApprove",
+        "$XSAPPNAME.AnalyticsRead",
+        "$XSAPPNAME.SystemConfig",
+        "$XSAPPNAME.AIActions"
+      ],
+      "attribute-references": ["Department", "Location"]
+    }
+  ],
+  "authorities-inheritance": false,
+  "oauth2-configuration": {
+    "token-validity": 3600,
+    "refresh-token-validity": 7200,
+    "redirect-uris": ["https://*.cfapps.eu10.hana.ondemand.com/**"]
+  }
 }

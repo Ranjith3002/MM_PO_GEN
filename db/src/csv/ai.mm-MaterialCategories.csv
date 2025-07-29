@@ -1,0 +1,6 @@
+ID;name;description;isActive
+1;Raw Materials;Basic raw materials for production;true
+2;Components;Electronic and mechanical components;true
+3;Consumables;Office and operational consumables;true
+4;Tools;Manufacturing tools and equipment;true
+5;Packaging;Packaging materials and supplies;true

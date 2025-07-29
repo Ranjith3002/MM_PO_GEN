@@ -1,6 +1,7 @@
 <mvc:View
     controllerName="ai.mm.materialdashboard.controller.Main"
     xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
     displayBlock="true"
     xmlns="sap.m">
 
@@ -14,19 +15,49 @@
                 <!-- Navigation buttons -->
                 <HBox class="sapUiMediumMarginBottom">
                     <Button
-                        text="{i18n>navToMaterials}"
+                        text="🤖 AI Materials"
                         type="Emphasized"
+                        icon="sap-icon://ai"
+                        press="onNavigateToAIMaterials"
+                        class="sapUiMediumMarginEnd" />
+                    <Button
+                        text="{i18n>navToMaterials}"
+                        type="Default"
                         press="onNavigateToMaterials"
                         class="sapUiMediumMarginEnd" />
                     <Button
                         text="{i18n>navToPOList}"
                         type="Default"
-                        press="onNavigateToPOList" />
+                        press="onNavigateToPOList"
+                        class="sapUiMediumMarginEnd" />
+                    <Button
+                        text="{i18n>navToAnalytics}"
+                        type="Default"
+                        press="onNavigateToAnalytics" />
                 </HBox>
 
                 <!-- Dashboard tiles -->
-                <HBox class="sapUiLargeMarginTop">
-                    <Panel class="sapUiMediumMarginEnd" width="300px" headerText="{i18n>materialsTitle}">
+                <HBox class="sapUiLargeMarginTop" wrap="Wrap">
+                    <!-- AI Enhanced Materials Panel -->
+                    <Panel class="sapUiMediumMarginEnd sapUiMediumMarginBottom" width="300px" headerText="🤖 AI-Enhanced Materials">
+                        <content>
+                            <VBox class="sapUiMediumMargin">
+                                <Text text="Intelligent stock predictions and AI-powered purchase order generation" />
+                                <HBox class="sapUiMediumMarginTop">
+                                    <core:Icon src="sap-icon://ai" color="Good" class="sapUiTinyMarginEnd" />
+                                    <Text text="Real-time AI analysis" class="sapUiTinyText" />
+                                </HBox>
+                                <Button
+                                    text="🤖 Open AI Dashboard"
+                                    type="Emphasized"
+                                    icon="sap-icon://ai"
+                                    press="onNavigateToAIMaterials"
+                                    class="sapUiMediumMarginTop" />
+                            </VBox>
+                        </content>
+                    </Panel>
+
+                    <Panel class="sapUiMediumMarginEnd sapUiMediumMarginBottom" width="300px" headerText="{i18n>materialsTitle}">
                         <content>
                             <VBox class="sapUiMediumMargin">
                                 <Text text="Manage your materials inventory" />
@@ -39,7 +70,7 @@
                         </content>
                     </Panel>
 
-                    <Panel width="300px" headerText="{i18n>poListTitle}">
+                    <Panel class="sapUiMediumMarginEnd" width="300px" headerText="{i18n>poListTitle}">
                         <content>
                             <VBox class="sapUiMediumMargin">
                                 <Text text="View and manage purchase orders" />
@@ -47,6 +78,19 @@
                                     text="{i18n>navToPOList}"
                                     type="Transparent"
                                     press="onNavigateToPOList"
+                                    class="sapUiMediumMarginTop" />
+                            </VBox>
+                        </content>
+                    </Panel>
+
+                    <Panel width="300px" headerText="{i18n>analyticsTitle}">
+                        <content>
+                            <VBox class="sapUiMediumMargin">
+                                <Text text="View analytics and insights" />
+                                <Button
+                                    text="{i18n>navToAnalytics}"
+                                    type="Transparent"
+                                    press="onNavigateToAnalytics"
                                     class="sapUiMediumMarginTop" />
                             </VBox>
                         </content>

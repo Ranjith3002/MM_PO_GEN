@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Debug Materials - UI5 Data Binding</title>
+    <script
+        id="sap-ui-bootstrap"
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.m,sap.ui.core"
+        data-sap-ui-resourceroots='{
+            "ai.mm.materialdashboard": "./"
+        }'
+        data-sap-ui-theme="sap_horizon">
+    </script>
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            console.log("UI5 Core initialized");
+            
+            // Create OData V4 Model
+            var oModel = new sap.ui.model.odata.v4.ODataModel({
+                serviceUrl: "/odata/v4/po/",
+                operationMode: "Server",
+                autoExpandSelect: true,
+                earlyRequests: true
+            });
+            
+            console.log("OData Model created:", oModel);
+            
+            // Test model connection
+            oModel.attachRequestCompleted(function(oEvent) {
+                console.log("Request completed:", oEvent.getParameters());
+            });
+            
+            oModel.attachRequestFailed(function(oEvent) {
+                console.error("Request failed:", oEvent.getParameters());
+            });
+            
+            // Create a simple table
+            var oTable = new sap.m.Table({
+                headerToolbar: new sap.m.Toolbar({
+                    content: [
+                        new sap.m.Title({text: "Materials Debug View"}),
+                        new sap.m.ToolbarSpacer(),
+                        new sap.m.Button({
+                            text: "Refresh",
+                            icon: "sap-icon://refresh",
+                            press: function() {
+                                console.log("Refreshing model...");
+                                oModel.refresh();
+                            }
+                        })
+                    ]
+                }),
+                columns: [
+                    new sap.m.Column({header: new sap.m.Text({text: "Name"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Category"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Current Stock"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Reorder Level"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Supplier"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Location"})})
+                ]
+            });
+            
+            // Create item template
+            var oTemplate = new sap.m.ColumnListItem({
+                cells: [
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Text({text: "{name}"}),
+                            new sap.m.Text({text: "{description}", class: "sapUiTinyText"})
+                        ]
+                    }),
+                    new sap.m.Text({text: "{categoryName}"}),
+                    new sap.m.ObjectNumber({
+                        number: "{currentStock}",
+                        unit: "{unitOfMeasure}",
+                        state: {
+                            parts: ['currentStock', 'reorderLevel'],
+                            formatter: function(current, reorder) {
+                                if (current <= reorder) return "Error";
+                                return "Success";
+                            }
+                        }
+                    }),
+                    new sap.m.Text({text: "{reorderLevel}"}),
+                    new sap.m.Text({text: "{supplierName}"}),
+                    new sap.m.Text({text: "{location}"})
+                ]
+            });
+            
+            // Bind items to the table
+            console.log("Binding table to /Materials...");
+            oTable.bindItems({
+                path: "/Materials",
+                template: oTemplate,
+                events: {
+                    dataRequested: function() {
+                        console.log("Data requested for Materials");
+                    },
+                    dataReceived: function(oEvent) {
+                        console.log("Data received:", oEvent.getParameters());
+                        var oData = oEvent.getParameter("data");
+                        if (oData && oData.value) {
+                            console.log(`Received ${oData.value.length} materials`);
+                            document.getElementById("status").innerHTML = 
+                                `✅ Successfully loaded ${oData.value.length} materials`;
+                        }
+                    }
+                }
+            });
+            
+            // Set model to table
+            oTable.setModel(oModel);
+            
+            // Create page
+            var oPage = new sap.m.Page({
+                title: "Materials Debug Dashboard",
+                content: [
+                    new sap.m.VBox({
+                        class: "sapUiMediumMargin",
+                        items: [
+                            new sap.m.MessageStrip({
+                                text: "This debug page tests the OData V4 model connection and data binding.",
+                                type: "Information",
+                                class: "sapUiMediumMarginBottom"
+                            }),
+                            new sap.m.Text({
+                                id: "status",
+                                text: "🔄 Loading materials...",
+                                class: "sapUiMediumMarginBottom"
+                            }),
+                            oTable
+                        ]
+                    })
+                ]
+            });
+            
+            // Create app
+            var oApp = new sap.m.App({
+                pages: [oPage]
+            });
+            
+            // Place app in DOM
+            oApp.placeAt("content");
+            
+            console.log("Debug app created and placed");
+        });
+    </script>
+</head>
+<body class="sapUiBody">
+    <div id="content"></div>
+</body>
+</html>

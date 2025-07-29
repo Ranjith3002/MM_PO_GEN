@@ -25,71 +25,145 @@
                     </HBox>
                 </HBox>
 
+                <!-- Status Message -->
+                <MessageStrip
+                    id="statusMessage"
+                    text="Loading materials data..."
+                    type="Information"
+                    visible="true"
+                    class="sapUiMediumMarginBottom" />
+
                 <!-- Materials Table -->
-                <Table 
+                <Table
                     id="materialsTable"
-                    items="{/Materials}"
+                    items="{
+                        path: '/Materials',
+                        events: {
+                            dataRequested: '.onDataRequested',
+                            dataReceived: '.onDataReceived'
+                        }
+                    }"
                     growing="true"
                     growingThreshold="20"
                     mode="None"
-                    class="sapUiResponsiveMargin">
+                    class="sapUiResponsiveMargin"
+                    busy="{/busy}"
+                    noDataText="No materials found. Please check your data connection."
+                    visible="{= ${/Materials}.length > 0 }">
                     
                     <headerToolbar>
                         <Toolbar>
                             <Title text="{i18n>materialsTitle}" />
                             <ToolbarSpacer />
-                            <Text text="{
-                                parts: ['/Materials'],
-                                formatter: '.formatItemsCount'
-                            }" />
+                            <VBox alignItems="End">
+                                <Text text="Total: {view>/materialsCount} materials" />
+                                <Text text="Low Stock: {view>/lowStockCount} items" class="sapUiTinyText" />
+                            </VBox>
                         </Toolbar>
                     </headerToolbar>
 
                     <columns>
-                        <Column>
-                            <Text text="{i18n>materialName}" />
+                        <Column width="30%">
+                            <Text text="Material Details" />
                         </Column>
-                        <Column>
-                            <Text text="{i18n>currentStock}" />
+                        <Column width="20%">
+                            <Text text="Stock &amp; Status" />
                         </Column>
-                        <Column>
-                            <Text text="{i18n>reorderLevel}" />
+                        <Column width="15%">
+                            <Text text="Supplier &amp; Price" />
                         </Column>
-                        <Column>
-                            <Text text="{i18n>leadTime}" />
-                        </Column>
-                        <Column>
-                            <Text text="{i18n>supplier}" />
-                        </Column>
-                        <Column width="200px">
-                            <Text text="Actions" />
+                        <Column width="35%">
+                            <Text text="🤖 AI Actions &amp; Insights" />
                         </Column>
                     </columns>
 
                     <items>
-                        <ColumnListItem>
+                        <ColumnListItem press="onMaterialPress">
                             <cells>
-                                <Text text="{name}" />
-                                <ObjectNumber 
-                                    number="{currentStock}" 
-                                    state="{
-                                        parts: ['currentStock', 'reorderLevel'],
-                                        formatter: '.formatStockState'
-                                    }" />
-                                <Text text="{reorderLevel}" />
-                                <Text text="{leadTime}" />
-                                <Text text="{supplier}" />
-                                <HBox>
-                                    <Button 
-                                        text="{i18n>predictDepletionBtn}" 
-                                        type="Transparent" 
-                                        press="onPredictDepletion"
-                                        class="sapUiTinyMarginEnd" />
-                                    <Button 
-                                        text="{i18n>generatePOBtn}" 
-                                        type="Emphasized" 
-                                        press="onGeneratePO" />
-                                </HBox>
+                                <!-- Material Details Column -->
+                                <VBox>
+                                    <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                        <core:Icon src="sap-icon://product" color="Default" class="sapUiTinyMarginEnd" />
+                                        <Text text="{name}" class="sapMTitle" />
+                                    </HBox>
+                                    <Text text="{description}" class="sapUiTinyText sapUiTinyMarginBottom" />
+                                    <HBox class="sapUiTinyMarginTop">
+                                        <ObjectStatus text="{categoryName}" state="Information" class="sapUiTinyMarginEnd" />
+                                        <ObjectStatus text="{location}" state="None" />
+                                    </HBox>
+                                </VBox>
+
+                                <!-- Stock & Status Column -->
+                                <VBox>
+                                    <HBox alignItems="Center" class="sapUiTinyMarginBottom">
+                                        <ObjectNumber
+                                            number="{currentStock}"
+                                            unit="{unitOfMeasure}"
+                                            state="{
+                                                parts: ['currentStock', 'reorderLevel'],
+                                                formatter: '.formatStockState'
+                                            }"
+                                            emphasized="true" />
+                                        <core:Icon
+                                            src="{
+                                                parts: ['currentStock', 'reorderLevel'],
+                                                formatter: '.formatStockIcon'
+                                            }"
+                                            color="{
+                                                parts: ['currentStock', 'reorderLevel'],
+                                                formatter: '.formatStockIconColor'
+                                            }"
+                                            class="sapUiTinyMarginBegin" />
+                                    </HBox>
+                                    <Text text="Reorder: {reorderLevel} {unitOfMeasure}" class="sapUiTinyText" />
+                                    <Text text="Lead Time: {leadTime} days" class="sapUiTinyText" />
+                                    <Text text="Safety Stock: {safetyStock}" class="sapUiTinyText" />
+                                </VBox>
+
+                                <!-- Supplier & Price Column -->
+                                <VBox>
+                                    <Text text="{supplierName}" class="sapMTitle sapUiTinyMarginBottom" />
+                                    <ObjectNumber
+                                        number="{unitPrice}"
+                                        unit="{currency_code}"
+                                        class="sapUiTinyMarginBottom" />
+                                    <Text text="Total Value: {
+                                        parts: ['currentStock', 'unitPrice'],
+                                        formatter: '.formatTotalValue'
+                                    }" class="sapUiTinyText" />
+                                </VBox>
+
+                                <!-- AI Actions & Insights Column -->
+                                <VBox>
+                                    <HBox class="sapUiTinyMarginBottom">
+                                        <Button
+                                            text="🤖 Predict"
+                                            type="Transparent"
+                                            icon="sap-icon://trend-up"
+                                            press="onAIPredictDepletion"
+                                            class="sapUiTinyMarginEnd" />
+                                        <Button
+                                            text="🛒 Generate PO"
+                                            type="Emphasized"
+                                            icon="sap-icon://add-document"
+                                            press="onAIGeneratePO"
+                                            enabled="{
+                                                parts: ['currentStock', 'reorderLevel'],
+                                                formatter: '.formatPOButtonEnabled'
+                                            }" />
+                                    </HBox>
+                                    <VBox class="sapUiTinyMarginTop">
+                                        <Text
+                                            id="aiStatusText"
+                                            text="Click Predict for AI insights"
+                                            class="sapUiTinyText" />
+                                        <ObjectStatus
+                                            id="aiConfidenceStatus"
+                                            text="AI Ready"
+                                            state="Information"
+                                            class="sapUiTinyMarginTop" />
+                                    </VBox>
+                                </VBox>
                             </cells>
                         </ColumnListItem>
                     </items>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Simple Materials Dashboard</title>
+    <script
+        id="sap-ui-bootstrap"
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.table"
+        data-sap-ui-theme="sap_horizon">
+    </script>
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            
+            // Create OData V4 Model
+            var oModel = new sap.ui.model.odata.v4.ODataModel({
+                serviceUrl: "/odata/v4/po/",
+                operationMode: "Server",
+                autoExpandSelect: true,
+                earlyRequests: true
+            });
+            
+            // Create Materials Table
+            var oMaterialsTable = new sap.m.Table({
+                headerToolbar: new sap.m.Toolbar({
+                    content: [
+                        new sap.m.Title({text: "Materials Overview"}),
+                        new sap.m.ToolbarSpacer(),
+                        new sap.m.Button({
+                            text: "Refresh",
+                            icon: "sap-icon://refresh",
+                            press: function() {
+                                oModel.refresh();
+                            }
+                        })
+                    ]
+                }),
+                columns: [
+                    new sap.m.Column({header: new sap.m.Text({text: "Material"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Category"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Stock"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Reorder Level"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Price"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Supplier"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Actions"})})
+                ],
+                growing: true,
+                growingThreshold: 20
+            });
+            
+            // Create item template
+            var oTemplate = new sap.m.ColumnListItem({
+                cells: [
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Text({
+                                text: "{name}",
+                                class: "sapUiMediumMarginBottom"
+                            }),
+                            new sap.m.Text({
+                                text: "{description}",
+                                class: "sapUiTinyText"
+                            })
+                        ]
+                    }),
+                    new sap.m.Text({text: "{categoryName}"}),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.ObjectNumber({
+                                number: "{currentStock}",
+                                unit: "{unitOfMeasure}",
+                                state: {
+                                    parts: ['currentStock', 'reorderLevel'],
+                                    formatter: function(current, reorder) {
+                                        if (current <= reorder) return "Error";
+                                        return "Success";
+                                    }
+                                }
+                            }),
+                            new sap.m.Text({
+                                text: "Min: {minStock} | Max: {maxStock}",
+                                class: "sapUiTinyText"
+                            })
+                        ]
+                    }),
+                    new sap.m.ObjectNumber({
+                        number: "{reorderLevel}",
+                        unit: "{unitOfMeasure}"
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.ObjectNumber({
+                                number: "{unitPrice}",
+                                unit: "{currency_code}"
+                            }),
+                            new sap.m.Text({
+                                text: {
+                                    parts: ['currentStock', 'unitPrice'],
+                                    formatter: function(stock, price) {
+                                        if (stock && price) {
+                                            return "Total: " + (stock * price).toFixed(2);
+                                        }
+                                        return "Total: 0.00";
+                                    }
+                                },
+                                class: "sapUiTinyText"
+                            })
+                        ]
+                    }),
+                    new sap.m.Text({text: "{supplierName}"}),
+                    new sap.m.HBox({
+                        items: [
+                            new sap.m.Button({
+                                text: "Predict",
+                                type: "Transparent",
+                                icon: "sap-icon://trend-up",
+                                press: function(oEvent) {
+                                    var oContext = oEvent.getSource().getBindingContext();
+                                    var sMaterialID = oContext.getProperty("ID");
+                                    var sMaterialName = oContext.getProperty("name");
+                                    
+                                    sap.m.MessageToast.show("Predicting depletion for " + sMaterialName);
+                                    
+                                    // Call predict action
+                                    var oOperation = oModel.bindContext("/predictDepletion(...)");
+                                    oOperation.setParameter("materialID", sMaterialID);
+                                    oOperation.execute().then(function(oResult) {
+                                        var sResult = oOperation.getBoundContext().getProperty("value");
+                                        sap.m.MessageBox.information("Prediction Result:\n" + sResult);
+                                    }).catch(function(oError) {
+                                        sap.m.MessageBox.error("Prediction failed: " + oError.message);
+                                    });
+                                }
+                            }),
+                            new sap.m.Button({
+                                text: "Generate PO",
+                                type: "Emphasized",
+                                icon: "sap-icon://add-document",
+                                press: function(oEvent) {
+                                    var oContext = oEvent.getSource().getBindingContext();
+                                    var sMaterialID = oContext.getProperty("ID");
+                                    var sMaterialName = oContext.getProperty("name");
+                                    
+                                    sap.m.MessageToast.show("Generating PO for " + sMaterialName);
+                                    
+                                    // Call generatePO action
+                                    var oOperation = oModel.bindContext("/generatePO(...)");
+                                    oOperation.setParameter("materialID", sMaterialID);
+                                    oOperation.execute().then(function(oResult) {
+                                        sap.m.MessageToast.show("Purchase Order generated successfully!");
+                                        oModel.refresh();
+                                    }).catch(function(oError) {
+                                        sap.m.MessageBox.error("PO generation failed: " + oError.message);
+                                    });
+                                }
+                            })
+                        ]
+                    })
+                ]
+            });
+            
+            // Bind items to the table
+            oMaterialsTable.bindItems({
+                path: "/Materials",
+                template: oTemplate
+            });
+            
+            // Set model
+            oMaterialsTable.setModel(oModel);
+            
+            // Create Purchase Orders Table
+            var oPOTable = new sap.m.Table({
+                headerToolbar: new sap.m.Toolbar({
+                    content: [
+                        new sap.m.Title({text: "Recent Purchase Orders"})
+                    ]
+                }),
+                columns: [
+                    new sap.m.Column({header: new sap.m.Text({text: "Material"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Quantity"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "AI Suggested"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Order Date"})}),
+                    new sap.m.Column({header: new sap.m.Text({text: "Status"})})
+                ],
+                growing: true,
+                growingThreshold: 10
+            });
+            
+            var oPOTemplate = new sap.m.ColumnListItem({
+                cells: [
+                    new sap.m.Text({text: "{materialName}"}),
+                    new sap.m.ObjectNumber({
+                        number: "{quantity}",
+                        unit: "PCS"
+                    }),
+                    new sap.m.ObjectStatus({
+                        text: {
+                            path: "suggestedByAI",
+                            formatter: function(bAI) {
+                                return bAI ? "AI Generated" : "Manual";
+                            }
+                        },
+                        state: {
+                            path: "suggestedByAI",
+                            formatter: function(bAI) {
+                                return bAI ? "Success" : "None";
+                            }
+                        }
+                    }),
+                    new sap.m.Text({text: "{orderDate}"}),
+                    new sap.m.ObjectStatus({
+                        text: "{status}",
+                        state: "Information"
+                    })
+                ]
+            });
+            
+            oPOTable.bindItems({
+                path: "/PurchaseOrders",
+                template: oPOTemplate
+            });
+            oPOTable.setModel(oModel);
+            
+            // Create main page
+            var oPage = new sap.m.Page({
+                title: "AI Material Management Dashboard",
+                content: [
+                    new sap.m.VBox({
+                        class: "sapUiMediumMargin",
+                        items: [
+                            new sap.m.MessageStrip({
+                                text: "Welcome to the AI-powered Material Management System",
+                                type: "Success",
+                                class: "sapUiMediumMarginBottom"
+                            }),
+                            oMaterialsTable,
+                            new sap.m.Title({
+                                text: "Purchase Orders",
+                                level: "H3",
+                                class: "sapUiLargeMarginTop"
+                            }),
+                            oPOTable
+                        ]
+                    })
+                ]
+            });
+            
+            // Create app
+            var oApp = new sap.m.App({
+                pages: [oPage]
+            });
+            
+            // Place app in DOM
+            oApp.placeAt("content");
+        });
+    </script>
+</head>
+<body class="sapUiBody">
+    <div id="content"></div>
+</body>
+</html>

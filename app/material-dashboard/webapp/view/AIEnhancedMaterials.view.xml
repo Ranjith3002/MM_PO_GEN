@@ -1,0 +1,253 @@
+<mvc:View
+    controllerName="ai.mm.materialdashboard.controller.AIEnhancedMaterials"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards">
+    
+    <Page title="{i18n>aiMaterialsTitle}" showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <VBox class="sapUiMediumMargin">
+                
+                <!-- AI Service Status -->
+                <MessageStrip 
+                    id="aiServiceStatus"
+                    text="Checking AI service status..."
+                    type="Information"
+                    visible="true"
+                    class="sapUiMediumMarginBottom" />
+
+                <!-- AI Insights Summary Cards -->
+                <HBox justifyContent="SpaceAround" class="sapUiMediumMarginBottom">
+                    <f:Card class="sapUiMediumMarginEnd" width="300px">
+                        <f:header>
+                            <card:Header title="🤖 AI Predictions" subtitle="Real-time stock analysis" />
+                        </f:header>
+                        <f:content>
+                            <VBox class="sapUiMediumMargin">
+                                <ObjectNumber id="criticalMaterialsCount" number="0" unit="Critical Materials" state="Error" />
+                                <ObjectNumber id="totalPredictionsCount" number="0" unit="Total Predictions" />
+                                <ObjectNumber id="avgConfidenceScore" number="0" unit="% Avg Confidence" state="Success" />
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                    <f:Card class="sapUiMediumMarginEnd" width="300px">
+                        <f:header>
+                            <card:Header title="📋 AI Purchase Orders" subtitle="Intelligent recommendations" />
+                        </f:header>
+                        <f:content>
+                            <VBox class="sapUiMediumMargin">
+                                <ObjectNumber id="aiGeneratedPOsCount" number="0" unit="AI Generated POs" state="Success" />
+                                <ObjectNumber id="totalPOValue" number="0" unit="USD Total Value" />
+                                <ObjectNumber id="avgOptimization" number="0" unit="% Cost Optimization" state="Good" />
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+
+                    <f:Card width="300px">
+                        <f:header>
+                            <card:Header title="⚡ AI Performance" subtitle="Service metrics" />
+                        </f:header>
+                        <f:content>
+                            <VBox class="sapUiMediumMargin">
+                                <ObjectNumber id="aiResponseTime" number="0" unit="ms Avg Response" />
+                                <ObjectNumber id="aiSuccessRate" number="0" unit="% Success Rate" state="Success" />
+                                <ObjectNumber id="aiModelType" number="Enhanced" unit="Model Type" />
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+                </HBox>
+
+                <!-- Enhanced Materials Table with AI Indicators -->
+                <Table 
+                    id="aiMaterialsTable"
+                    items="{/Materials}"
+                    growing="true"
+                    growingThreshold="20"
+                    mode="None"
+                    class="sapUiResponsiveMargin"
+                    busy="{/busy}"
+                    noDataText="No materials found. Please check your data connection.">
+                    
+                    <headerToolbar>
+                        <Toolbar>
+                            <Title text="🤖 AI-Enhanced Materials Overview" />
+                            <ToolbarSpacer />
+                            <Button 
+                                text="🔄 Refresh AI Analysis" 
+                                icon="sap-icon://refresh" 
+                                press="onRefreshAIAnalysis" 
+                                type="Emphasized" />
+                            <Button 
+                                text="📊 Bulk AI Analysis" 
+                                icon="sap-icon://batch-payments" 
+                                press="onBulkAIAnalysis" 
+                                class="sapUiTinyMarginBegin" />
+                        </Toolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column>
+                            <Text text="Material &amp; AI Status" />
+                        </Column>
+                        <Column>
+                            <Text text="Stock Analysis" />
+                        </Column>
+                        <Column>
+                            <Text text="AI Prediction" />
+                        </Column>
+                        <Column>
+                            <Text text="AI Recommendations" />
+                        </Column>
+                        <Column>
+                            <Text text="Actions" />
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem press="onMaterialPress">
+                            <cells>
+                                <!-- Material Info with AI Indicators -->
+                                <VBox>
+                                    <HBox alignItems="Center">
+                                        <core:Icon 
+                                            src="sap-icon://product" 
+                                            color="Default" 
+                                            class="sapUiTinyMarginEnd" />
+                                        <Text text="{name}" class="sapMTitle" />
+                                        <core:Icon 
+                                            id="aiIndicator"
+                                            src="sap-icon://ai"
+                                            color="Good"
+                                            class="sapUiTinyMarginBegin"
+                                            tooltip="AI Analysis Available" />
+                                    </HBox>
+                                    <Text text="{description}" class="sapUiTinyText" />
+                                    <HBox class="sapUiTinyMarginTop">
+                                        <ObjectStatus 
+                                            text="{categoryName}" 
+                                            state="Information" 
+                                            class="sapUiTinyMarginEnd" />
+                                        <ObjectStatus 
+                                            text="{supplierName}" 
+                                            state="None" />
+                                    </HBox>
+                                </VBox>
+
+                                <!-- Stock Analysis -->
+                                <VBox>
+                                    <HBox alignItems="Center">
+                                        <ObjectNumber
+                                            number="{currentStock}"
+                                            unit="{unitOfMeasure}"
+                                            state="{
+                                                parts: ['currentStock', 'reorderLevel'],
+                                                formatter: '.formatStockState'
+                                            }"
+                                            emphasized="true" />
+                                        <core:Icon 
+                                            src="{
+                                                parts: ['currentStock', 'reorderLevel'],
+                                                formatter: '.formatStockIcon'
+                                            }"
+                                            color="{
+                                                parts: ['currentStock', 'reorderLevel'],
+                                                formatter: '.formatStockIconColor'
+                                            }"
+                                            class="sapUiTinyMarginBegin" />
+                                    </HBox>
+                                    <Text text="Reorder: {reorderLevel} {unitOfMeasure}" class="sapUiTinyText" />
+                                    <Text text="Location: {location}" class="sapUiTinyText" />
+                                    <ObjectNumber
+                                        number="{unitPrice}"
+                                        unit="{currency_code}"
+                                        class="sapUiTinyMarginTop" />
+                                </VBox>
+
+                                <!-- AI Prediction Display -->
+                                <VBox>
+                                    <HBox alignItems="Center">
+                                        <core:Icon src="sap-icon://trend-up" color="Critical" class="sapUiTinyMarginEnd" />
+                                        <Text 
+                                            id="predictionText"
+                                            text="Click to predict"
+                                            class="sapMTitle" />
+                                    </HBox>
+                                    <HBox class="sapUiTinyMarginTop">
+                                        <ObjectStatus 
+                                            id="confidenceStatus"
+                                            text="Confidence: N/A"
+                                            state="None"
+                                            class="sapUiTinyMarginEnd" />
+                                        <ObjectStatus 
+                                            id="modelStatus"
+                                            text="Model: N/A"
+                                            state="Information" />
+                                    </HBox>
+                                    <Text 
+                                        id="aiInsight"
+                                        text=""
+                                        class="sapUiTinyText sapUiTinyMarginTop"
+                                        maxLines="2" />
+                                </VBox>
+
+                                <!-- AI Recommendations -->
+                                <VBox>
+                                    <List 
+                                        id="recommendationsList"
+                                        items="{recommendations>/}"
+                                        showNoData="false">
+                                        <StandardListItem 
+                                            title="{recommendations>}"
+                                            icon="sap-icon://lightbulb"
+                                            type="Inactive" />
+                                    </List>
+                                    <Text 
+                                        text="No recommendations available"
+                                        class="sapUiTinyText"
+                                        visible="{= ${recommendations>/}.length === 0}" />
+                                </VBox>
+
+                                <!-- Action Buttons -->
+                                <VBox>
+                                    <Button 
+                                        text="🔮 AI Predict"
+                                        icon="sap-icon://trend-up"
+                                        type="Transparent"
+                                        press="onAIPredictPress"
+                                        class="sapUiTinyMarginBottom" />
+                                    <Button 
+                                        text="🛒 AI Generate PO"
+                                        icon="sap-icon://add-document"
+                                        type="Emphasized"
+                                        press="onAIGeneratePOPress"
+                                        enabled="{
+                                            parts: ['currentStock', 'reorderLevel'],
+                                            formatter: '.formatPOButtonEnabled'
+                                        }" />
+                                    <Button 
+                                        text="📊 View Details"
+                                        icon="sap-icon://detail-view"
+                                        type="Transparent"
+                                        press="onViewDetailsPress"
+                                        class="sapUiTinyMarginTop" />
+                                </VBox>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+                <!-- AI Analysis Progress -->
+                <MessageStrip 
+                    id="analysisProgress"
+                    text="AI analysis in progress..."
+                    type="Information"
+                    visible="false"
+                    class="sapUiMediumMarginTop" />
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>
